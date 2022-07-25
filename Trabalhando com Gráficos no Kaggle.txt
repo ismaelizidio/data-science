@@ -1,0 +1,108 @@
+Trabalhando com Gráficos no Kaggle:
+
+# Os gráficos mais comuns em análises estatísticas são os gráficos de barra, de pizza e histograma.
+
+Uma das melhores formas de manipular gráficos no kaggle é com a biblioteca matplotlib.pyplot:
+	
+	'import matplotlib.pyplot as plt'
+	
+	
+	
+#Analisando distribuição:
+
+	df['enem_nt_mt'].hist()
+	
+	------
+	plt.figure(figsize = (15,8))
+	df['enem_nt_mt'].hist(bins = 40, ec = "k", alpha = .6, color = "blue")
+	
+	“bins” é o número de intervalos que o histograma considera para criar as barras
+	
+	O parâmetro “ec” é uma abreviação de “edgecolor” (cor das bordas das barras)
+	e “k” é abreviação de “black”, assim dando uma borda preta a cada barra do plot.
+	
+	O “alpha” é um valor de transparência das barras que adotei como 0.6 (altere como achar melhor) para podermos ver a grade de referência e termos uma maior noção do valor a que cada barra corresponde.
+	
+	------
+	plt.figure(figsize = (15,8))
+	df['enem_nt_mt'].hist(bins = 40, ec = "k", alpha = .6, color = "blue")
+	plt.title("Distribuição das notas em matemática")
+	
+	plt.xlabel("Notas")
+	plt.ylabel("Contagem")
+
+	------
+	plt.style.use('fivethirtyeight')
+	plt.figure(figsize = (15,8))
+	df['enem_nt_mt'].hist(bins = 40, ec = "k", alpha = .6, color = "blue")
+	plt.title("Distribuição das notas em matemática")
+	
+	plt.xlabel("Notas")
+	plt.ylabel("Contagem")
+	
+	------------ Apenas notas em matemática acima de 900
+	plt.figure(figsize = (15, 8))
+	
+	df[df["enem_nt_mt"] > 900]["enem_nt_mt"].hist(bins = 20, ec = "k", alpha = .6, color = "blue")
+	
+	plt.title("Distribuição de notas em matemática acima de 900")
+	plt.xlabel("Notas")
+	plt.ylabel("Contagem")
+	
+	
+	
+	
+	
+#Usando Mais de um gráfico por figura:
+
+Suponha que queremos ver o ano de início de graduação dos alunos que realizaram o ENADE em 2016.
+
+Encontramos os anos na base de dados
+	
+	anos = df["nu_ano_inicio_graduacao"].value_counts().index
+
+Fazemos a contagem:
+	
+	count = df["nu_ano_inicio_graduacao"].value_counts().values
+
+Plotando a figura:
+	plt.figure(figsize = (24, 8))
+
+Plotando o primeiro gráfico:
+	plt.subplot(1, 2, 1)
+	plt.bar(anos, count, ec = "k", alpha = .6, color = "blue")
+
+	plt.xlabel("Ano")
+	plt.title("Ano de início de graduação dos alunos que realizaram o ENADE em 2016")
+
+Plotando o segundo gráfico:
+	plt.subplot(1, 2, 2)
+
+	plt.pie(count, 
+        labels = list(anos),  
+        colors = ["#20257c", "#424ad1", "#6a8ee8", "#66bbe2", "#66dee2", "#6ce2cb", "#6ad187", "#3b7f5b"],
+        labeldistance = 1.1,
+        explode = [0, 0, 0, .1, .2, .4, .6, .8],
+        wedgeprops = {"ec": "k"}, 
+        textprops = {"fontsize": 15}, 
+        )
+	
+	plt.axis("equal")
+	plt.title("Ano de início de graduação dos alunos que realizaram o ENADE em 2016")
+	plt.legend()
+
+- labels: lista com as etiquetas de cada porção da pizza. Aqui fazemos uso da variável “anos”, que já está na ordem correta vindo do value_counts(), tornando ela uma lista. Note que se usássemos uma lista com uma ordem diferente, o resultado apresentaria dados errados, não batendo cada ano com sua contagem. Outro detalhe é que o tamanho da lista deve bater com o número de dados.
+
+- colors: lista com cores (rgb/rgba/hex/colorname). A ordem aqui importa. O tamanho deve ser igual ao número de dados.
+
+- labeldistance: distância que as etiquetas em Labels ficam. Aconselho a brincar um pouco com esse valor para ter uma noção melhor da distância que deseja.
+
+- explode: lista com valores correspondentes ao quanto você quer que cada pedaço saia do círculo. É com esse parâmetro que conseguimos explodir a pizza e criar o efeito visto acima. Para os 3 primeiros consideramos 0 e para os demais aumentamos progressivamente o valor. Se quisessemos destacar apenas um ano específico, colocaríamos 0 para todos menos esse ano. O tamanho da lista deve ser o mesmo do número de dados.
+
+- wedgeprops: recebe um dicionário. Poderíamos alterar diversas coisas aqui, mas usamos somente para colocar uma borda, já que “plt.pie” não recebe como parâmetro direto “edgecolor”.
+
+- textprops: dicionário para alterar de diversas formas os textos. Aqui apenas alteramos o tamanho das etiquetas.
+
+A linha “plt.axis(“equal”)” serve para garantirmos um formato redondo e não de elipse.
+
+Por fim, “plt.legend()” nos dá uma legenda de cara cor e etiqueta.
